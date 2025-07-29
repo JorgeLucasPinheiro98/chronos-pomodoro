@@ -1,4 +1,4 @@
-import { PlayCircleIcon } from 'lucide-react';
+import { PlayCircleIcon, StopCircleIcon } from 'lucide-react';
 import { Cycles } from '../Cycles';
 import { DefaultButton } from '../DefaultButton';
 import { DefaultInput } from '../defaultInput';
@@ -17,17 +17,18 @@ export function MainForm() {
   const nextCycle = getNextCycle(state.currentCycle);
   const nextCycleType = getNextCycleType(nextCycle);
 
+  
   function handleCreateNewTask(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (taskName === null) return;
-
+    
     const isTaskName = taskName.trim();
-
+    
     if (!isTaskName) {
       alert('Digite o nome da Tarefa');
       return;
     }
-
+    
     const newTask: TaskModel = {
       id: Date.now().toString(),
       name: taskName,
@@ -37,9 +38,9 @@ export function MainForm() {
       duration: state.config[nextCycleType],
       type: nextCycleType,
     };
-
+    
     const secondsRemaining = newTask.duration * 60;
-
+    
     setState(prevState => {
       return {
         ...prevState,
@@ -52,7 +53,17 @@ export function MainForm() {
       };
     });
   }
-
+  
+  function handleInteruptTask() {
+    setState(prevState => {
+      return {
+        ...prevState,
+        activeTask: null,
+        secondsRemaining: 0,
+        formattedSecondsRemaining: '00:00'
+      };
+    });
+  }
   return (
     <form className='form' action='' onSubmit={handleCreateNewTask}>
       <div className='formRow'>
@@ -65,6 +76,7 @@ export function MainForm() {
           onChange={e => {
             setTaskName(e.target.value);
           }}
+          disabled={!!state.activeTask}
         />
       </div>
 
@@ -72,12 +84,32 @@ export function MainForm() {
         <p>Proximo intervalo é de {state.config[nextCycleType]} min</p>
       </div>
 
-      <div className='formRow'>
-        <Cycles />
-      </div>
+      {state.currentCycle > 0 && (
+        <div className='formRow'>
+          <Cycles />
+        </div>
+      )}
 
       <div className='formRow'>
-        <DefaultButton color='green' icon={<PlayCircleIcon />} />
+        {!state.activeTask ? (
+          <DefaultButton
+            aria-label='Iniciar nova tarefa'
+            title='Iniciar nova tarefa'
+            type='submit'
+            color='green'
+            icon={<PlayCircleIcon />}
+            key={'Button play'}
+          />
+        ) : (
+        <DefaultButton
+          aria-label='Parar tarefa'
+          title='Parar tarefa'
+          type='button'
+          color='red'
+          icon={<StopCircleIcon />}
+          onClick={handleInteruptTask}
+          key={'Button stop'}
+        />)}
       </div>
     </form>
   );
