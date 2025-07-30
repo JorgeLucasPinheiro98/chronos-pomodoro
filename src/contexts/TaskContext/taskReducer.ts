@@ -24,6 +24,17 @@ export function taskReducer(
 
       return state;
     }
+
+    case TaskActionTypes.COUNT_DOWN: {
+      return {
+        ...state,
+        secondsRemaining: action.payload.secondsRemaining,
+        formattedSecondsRemaining: FormatSecondsToMinutes(
+          action.payload.secondsRemaining,
+        ),
+      };
+    }
+
     case TaskActionTypes.INTERRUPT_TASK: {
       return {
         ...state,
@@ -38,6 +49,22 @@ export function taskReducer(
         }),
       };
     }
+
+    case TaskActionTypes.TASK_COMPLETE: {
+      return {
+        ...state,
+        activeTask: null,
+        secondsRemaining: 0,
+        formattedSecondsRemaining: '00:00',
+        tasks: state.tasks.map(task => {
+          if (state.activeTask && state.activeTask.id === task.id) {
+            return { ...task, completeDate: Date.now() };
+          }
+          return task;
+        }),
+      };
+    }
+
     case TaskActionTypes.RESET_TASK: {
       return state;
     }
