@@ -1,13 +1,14 @@
 import { TimerIcon } from 'lucide-react';
 import style from './styles.module.css';
+import { RouterLink } from '../RouterLink';
 
 export function Logo() {
   return (
   <div className={style.logo}>
-    <a href="#" className={style.logoLink}>
+    <RouterLink href="#" className={style.logoLink}>
       <TimerIcon />
       <span>Chronos</span>
-    </a>
+    </RouterLink>
   </div>
 )
 }
