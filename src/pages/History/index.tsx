@@ -9,28 +9,38 @@ import { useTaskContext } from '../../contexts/TaskContext/useTaskContext';
 import { formatDate } from '../../utils/formatDate';
 import { getStatusTask } from '../../utils/getStatusTask';
 import { TaskActionTypes } from '../../contexts/TaskContext/taskActions';
+import { useEffect } from 'react';
 
 export function History() {
   const { state, dispatch } = useTaskContext();
+  const hasTask = state.tasks.length
   const shortTasks = [...state.tasks].sort((a, b) => {
+
+
     return b.startDate - a.startDate;
   });
+
+  
   function handleResetHistory() {
-    if(!confirm('Tem certeza que quer apagar o historico'))return
+    // if(!confirm('Tem certeza que quer apagar o historico'))return
     dispatch({type: TaskActionTypes.RESET_TASK})
   }
+
+  useEffect(() => {
+  },[state])
+  
   return (
     <MainTemplete>
       <Container>
         <Heading>
           <span>History</span>
-          <span className={styles.buttonContainer}>
+          {!!hasTask && (<span className={styles.buttonContainer}>
             <DefaultButton icon={<TrashIcon />} color='red' onClick={handleResetHistory}/>
-          </span>
+          </span>)}
         </Heading>
       </Container>
       <Container>
-        <div className={styles.responsiveTable}>
+        {hasTask ?(<div className={styles.responsiveTable}>
           <table>
             <thead>
               <tr>
@@ -60,7 +70,7 @@ export function History() {
               })}
             </tbody>
           </table>
-        </div>
+        </div>) : (<p style={{textAlign: "center"}}>Adicione uma tarefa</p>)}
       </Container>
     </MainTemplete>
   );
