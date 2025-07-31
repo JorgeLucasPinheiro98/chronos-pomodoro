@@ -5,20 +5,32 @@ import { Heading } from '../../components/heading';
 import { MainTemplete } from '../../templates/MainTemplate/Index';
 
 import styles from './styles.module.css';
+import { useTaskContext } from '../../contexts/TaskContext/useTaskContext';
+import { formatDate } from '../../utils/formatDate';
+import { getStatusTask } from '../../utils/getStatusTask';
+import { TaskActionTypes } from '../../contexts/TaskContext/taskActions';
 
 export function History() {
+  const { state, dispatch } = useTaskContext();
+  const shortTasks = [...state.tasks].sort((a, b) => {
+    return b.startDate - a.startDate;
+  });
+  function handleResetHistory() {
+    if(!confirm('Tem certeza que quer apagar o historico'))return
+    dispatch({type: TaskActionTypes.RESET_TASK})
+  }
   return (
     <MainTemplete>
       <Container>
         <Heading>
           <span>History</span>
           <span className={styles.buttonContainer}>
-            <DefaultButton icon={<TrashIcon />} color='red' />
+            <DefaultButton icon={<TrashIcon />} color='red' onClick={handleResetHistory}/>
           </span>
         </Heading>
       </Container>
       <Container>
-        <div className='resposiveTable'>
+        <div className={styles.responsiveTable}>
           <table>
             <thead>
               <tr>
@@ -30,17 +42,21 @@ export function History() {
               </tr>
             </thead>
             <tbody>
-              {Array.from({length: 20}).map((_, index) => {
+              {shortTasks.map(task => {
+                const getTaskType = {
+                  workTime: 'Foco',
+                  shortBreakTime: 'Descanso Curto',
+                  longBreakTime: 'Descanso Longo',
+                };
                 return (
-              
-                <tr key={index}>
-                  <td>Estudar</td>
-                  <td>25min</td>
-                  <td>20/04/2015 08:00</td>
-                  <td>Completa</td>
-                  <td>Foco</td> 
-                </tr>
-                )
+                  <tr key={task.id}>
+                    <td>{task.name}</td>
+                    <td>{task.duration}min</td>
+                    <td>{formatDate(task.startDate)}</td>
+                    <td>{getStatusTask(task, state.activeTask)}</td>
+                    <td>{getTaskType[task.type]}</td>
+                  </tr>
+                );
               })}
             </tbody>
           </table>
@@ -49,4 +65,3 @@ export function History() {
     </MainTemplete>
   );
 }
-
