@@ -1,0 +1,28 @@
+.buttonContainer {
+    min-width: auto;
+    margin: 0;
+    padding: 1rem;
+}
+
+.buttonContainer button svg {
+    width: 2rem;
+    height: 2rem;
+}
+
+.resposiveTable {
+    overflow-x: auto;
+    border-radius: 0.8rem;
+    background-color: red
+}
+
+.resposiveTable table {
+    width: 100%;
+    min-width: 64rem;
+    font-size: 1.6rem;
+    border-collapse: collapse;
+}
+
+.responsiveTable th {
+    background-color: var(--gray-600);
+    background-color: red;
+}
